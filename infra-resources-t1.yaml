@@ -37,6 +37,6 @@ Resources:
   PhotoAnalyzer: 
     Type: AWS::Rekognition::Project
     Properties: 
-      Name: PhotoAnalyzer # Replace with real name
+      Name: PhotoAnalyzer
 
 # IAM Roles, Policies etc
