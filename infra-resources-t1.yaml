@@ -1,0 +1,42 @@
+Resources:
+  # S3 Buckets
+
+  # Bucket for storing the photos
+  ccbigdata-assignment3-b2:
+    Type: AWS::S3::Bucket
+
+  # Frontend bucket for hosting the website
+  ccbigdata-assignment3-b1: 
+    Type: AWS::S3::Bucket
+
+  # API Gateway
+  SearchPhotos:
+    Type: AWS::ApiGateway::RestApi
+
+  # Lambda Functions
+  # Triggered when it receives search query 'q' from Lex
+  search-photos-lf2:
+    Type: AWS::Lambda::Function
+  # Triggered when photo is uploaded to S3 B2
+  index-photos-LF1:
+    Type: AWS::Lambda::Function
+
+  # OpenSearch Domain
+  cloud-hw3:
+    Type: AWS::OpenSearchService::Domain
+
+  # Lex and Rekognition
+  PhotoAlbumBot:
+    Type: AWS::Lex::Bot
+    Properties:
+      Name: PhotoAlbumBot
+      BotName: PhotoAlbumBot
+      BotAlias: $LATEST
+      IntentVersion: $LATEST
+
+  PhotoAnalyzer: 
+    Type: AWS::Rekognition::Project
+    Properties: 
+      Name: PhotoAnalyzer # Replace with real name
+
+# IAM Roles, Policies etc
