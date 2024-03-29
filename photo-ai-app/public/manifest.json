@@ -1,0 +1,9 @@
+{
+  "short_name": "Photo AI App",
+  "name": "Search Your Photos Based on Tags/Keywords",
+  "icons": [  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
