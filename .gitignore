@@ -173,4 +173,16 @@ poetry.toml
 # LSP config files
 pyrightconfig.json
 
+### Node ###
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+node_modules/
+
 # End of https://www.toptal.com/developers/gitignore/api/python
