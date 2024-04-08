@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Search Your Photo Album</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="assets/css/index.css"/>
+    
+    <!-- <link rel="icon" href="%PUBLIC_URL%/favicon.ico" /> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="We have implemented a photo album web application, which can be searched using natural language text (with tools AWS Lex, AWS OpenSearch, and AWS Rekognition). This application can be queried, to search for people, objects, actions, landmarks, and more in photos. "
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+    <link rel="manifest" href="assets/manifest.json" />
+    <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+  </head>
+
+  <body>
+    <h1 id="big-text">Photo AI Application</h1>
+    <p id="body">Use natural language processing to search your photos for people, objects, actions, landmarks and more!</p>
+    <br> <br>
+    <div class="search-bar">
+      <input type="text" placeholder="Enter tags or keywords to search" id="searchQuery">
+      <button class="search" id="startSearch">Search</button>
+    </div>
+    <div class="search-result">
+      <img id="result-img"> 
+    </div>
+    <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> 
+    <div id="file-upload">
+      <input type="file" id="fileUpload">
+      <button id="uploadBtn" >Upload</button>
+    </div>
+
+    <div id="preview"></div>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="assets/scripts/index.js"></script>
+  </body>
+
+</html>
