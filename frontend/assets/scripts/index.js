@@ -9,6 +9,7 @@ function uploadFile(file) {
         data: file,
         processData: false,
         contentType: false,
+        headers: { 'x-amz-meta-customLabels': $("#custom-tags").val() },
         success: function(data) {
             console.log('File uploaded successfully:', data);
         },
