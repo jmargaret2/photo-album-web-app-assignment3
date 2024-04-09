@@ -19,6 +19,6 @@ phases:
     commands:
       - echo "Deploying LF1 function..."
       - ls 
-      - aws lambda update-function-code --function-name cloud-hw3-LF1 --zip-file fileb://LF1.zip
+      - aws lambda update-function-code --function-name index-photos-LF1 --zip-file fileb://LF1.zip
       - echo "Deploying LF2 function..."
-      - aws lambda update-function-code --function-name cloud-hw3-LF2 --zip-file fileb://LF2.zip
+      - aws lambda update-function-code --function-name search-photos-lf2 --zip-file fileb://LF2.zip
