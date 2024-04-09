@@ -1,0 +1,21 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+  pre_build:
+    commands:
+      - echo "Installing dependencies..."
+      - pip install -r LF1/requirements.txt -t LF1/
+      - pip install -r LF2/requirements.txt -t LF2/
+  build:
+    commands:
+      - echo "Building Lambda function 1..."
+      - cd function1 && zip -r ../LF1.zip . && cd ..
+      - echo "Building Lambda function 2..."
+      - cd function2 && zip -r ../LF2.zip . && cd ..
+artifacts:
+  files:
+    - LF1.zip
+    - LF2.zip
