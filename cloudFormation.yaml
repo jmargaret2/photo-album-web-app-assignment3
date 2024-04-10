@@ -35,7 +35,7 @@ Resources:
       Role: arn:aws:iam::767397693070:role/service-role/search-photos-lf2-role-z0icje50
       Runtime: python3.12
   
-  fontendBucket:
+  frontendBucket:
     Type: 'AWS::S3::Bucket'
     Properties:
       AccessControl: PublicRead
@@ -47,7 +47,7 @@ Resources:
   MyBucketPolicy:
     Type: 'AWS::S3::BucketPolicy'
     Properties:
-      Bucket: fontendBucket
+      Bucket: frontendBucket
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -55,7 +55,7 @@ Resources:
             Effect: Allow
             Principal: '*'
             Action: 's3:GetObject'
-            Resource: 'arn:aws:s3:::fontendBucket/*'
+            Resource: 'arn:aws:s3:::frontendBucket/*'
 
 
   MyCodePipeline:
