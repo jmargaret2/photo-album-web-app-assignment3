@@ -55,6 +55,29 @@ Resources:
         LambdaConfigurations: 
           - Event: s3:ObjectCreated:*
             Function: !GetAtt LF1.Arn
+  
+  frontendBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: frontend-bucket-b1
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        IgnorePublicAcls: false
+        BlockPublicPolicy: false
+        RestrictPublicBuckets: false
+
+  MyBucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref frontendBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: PublicReadGetObject
+            Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Sub 'arn:aws:s3:::${frontendBucket}/*'
         
   MyCodePipeline:
     Type: 'AWS::CodePipeline::Pipeline'

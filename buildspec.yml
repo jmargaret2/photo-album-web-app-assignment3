@@ -23,3 +23,4 @@ phases:
       - echo "Deploying LF2 function..."
       - aws lambda update-function-code --function-name LF2 --zip-file fileb://LF2.zip
       - aws s3 cp --recursive ./frontend s3://frontend-bucket-b1
+      - echo 'Public URL - https://frontend-bucket-b1.s3.amazonaws.com/index.html'
