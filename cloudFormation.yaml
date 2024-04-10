@@ -37,10 +37,20 @@ Resources:
       Role: arn:aws:iam::767397693070:role/service-role/search-photos-lf2-role-z0icje50
       Runtime: python3.12
 
-  frontendBucket:
-    Type: AWS::S3::Bucket
+  S3Permission:
+    Type: AWS::Lambda::Permission
     Properties:
-      BucketName: frontend-bucket-b1
+      FunctionName: !GetAtt LF1.Arn
+      Action: lambda:InvokeFunction
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref 'AWS::AccountId'
+  
+  imagesBucket:
+    Type: AWS::S3::Bucket
+    DependsOn:
+      - "S3Permission"
+    Properties:
+      BucketName: images-bucket-b2
       NotificationConfiguration:
         LambdaConfigurations: 
           - Event: s3:ObjectCreated:*
