@@ -40,10 +40,11 @@ Resources:
   frontendBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: frontend-bucket
-      LambdaConfiguration: 
-        Event: s3:ObjectCreated:*
-        Function: !GetAtt LF1.Arn
+      BucketName: frontend-bucket-b1
+      NotificationConfiguration:
+        LambdaConfigurations: 
+          - Event: s3:ObjectCreated:*
+            Function: !GetAtt LF1.Arn
         
   MyCodePipeline:
     Type: 'AWS::CodePipeline::Pipeline'
