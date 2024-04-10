@@ -41,7 +41,7 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: frontend-bucket
-      LambdaConfigurations: 
+      LambdaConfiguration: 
         Event: s3:ObjectCreated:*
         Function: !GetAtt LF1.Arn
         
