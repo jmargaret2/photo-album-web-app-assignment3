@@ -1,0 +1,95 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS CloudFormation Template to create an empty Lambda function and trigger CodePipeline'
+Resources:
+  LF1:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Code:
+        ZipFile: |
+          import json
+
+          def lambda_handler(event, context):
+              # Your Lambda function code goes here
+              return {
+                  'statusCode': 200,
+                  'body': json.dumps('Hello from Lambda!')
+              }
+      Handler: LF1.lambda_handler
+      Role: arn:aws:iam::767397693070:role/service-role/index-photos-LF1-role-kjekb1zm
+      Runtime: python3.12
+
+  LF2:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Code:
+        ZipFile: |
+          import json
+
+          def lambda_handler(event, context):
+              # Your Lambda function code goes here
+              return {
+                  'statusCode': 200,
+                  'body': json.dumps('Hello from Lambda!')
+              }
+      Handler: LF2.lambda_handler
+      Role: arn:aws:iam::767397693070:role/service-role/search-photos-lf2-role-z0icje50
+      Runtime: python3.12
+  
+  fontend-bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      AccessControl: PublicRead
+      CorsConfiguration:
+        CorsRules:
+          - AllowedMethods: ['GET','PUT', 'POST']
+            AllowedOrigins: ['*']
+
+  MyBucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: fontend-bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowPublicRead
+            Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: 'arn:aws:s3:::fontend-bucket-b1/*'
+
+
+  MyCodePipeline:
+    Type: 'AWS::CodePipeline::Pipeline'
+    Properties:
+      RoleArn: arn:aws:iam::767397693070:role/service-role/AWSCodePipelineServiceRole-us-east-1-cloud-hw3
+      ArtifactStore:
+        Type: S3
+        Location: codepipeline-us-east-1-767447032713
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: SourceAction
+              ActionTypeId:
+                Category: Source
+                Owner: ThirdParty
+                Provider: GitHub
+                Version: '1'
+              Configuration:
+                Owner: jmargaret2
+                Repo: photo-album-web-app-assignment3
+                Branch: codebuild
+                OAuthToken: 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
+              OutputArtifacts:
+                - Name: SourceOutput
+        - Name: Build
+          Actions:
+            - Name: BuildAction
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: '1'
+              Configuration:
+                ProjectName: cloud-hw3
+              InputArtifacts:
+                - Name: SourceOutput
