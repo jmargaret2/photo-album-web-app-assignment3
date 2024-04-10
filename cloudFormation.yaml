@@ -4,6 +4,7 @@ Resources:
   LF1:
     Type: 'AWS::Lambda::Function'
     Properties:
+      FunctionName: LF1
       Code:
         ZipFile: |
           import json
@@ -21,6 +22,7 @@ Resources:
   LF2:
     Type: 'AWS::Lambda::Function'
     Properties:
+      FunctionName: LF2
       Code:
         ZipFile: |
           import json
@@ -34,30 +36,15 @@ Resources:
       Handler: LF2.lambda_handler
       Role: arn:aws:iam::767397693070:role/service-role/search-photos-lf2-role-z0icje50
       Runtime: python3.12
-  
+
   frontendBucket:
-    Type: 'AWS::S3::Bucket'
+    Type: AWS::S3::Bucket
     Properties:
-      AccessControl: PublicRead
-      CorsConfiguration:
-        CorsRules:
-          - AllowedMethods: ['GET','PUT', 'POST']
-            AllowedOrigins: ['*']
-
-  MyBucketPolicy:
-    Type: 'AWS::S3::BucketPolicy'
-    Properties:
-      Bucket: frontendBucket
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Sid: AllowPublicRead
-            Effect: Allow
-            Principal: '*'
-            Action: 's3:GetObject'
-            Resource: 'arn:aws:s3:::frontendBucket/*'
-
-
+      BucketName: 'fontendBucket'
+      LambdaConfigurations: 
+        Event: s3:ObjectCreated:*
+        Function: !GetAtt LF1.Arn
+        
   MyCodePipeline:
     Type: 'AWS::CodePipeline::Pipeline'
     Properties:
