@@ -3,41 +3,53 @@ import boto3
 from opensearchpy import OpenSearch, RequestsHttpConnection
 
 lexClient = boto3.client("lexv2-runtime")
-opensearch_client = boto3.client("opensearch")
+
+opensearch_client = OpenSearch(
+    hosts=[{"host": "search-cloud-hw3-rjqzgwzppqcyrcgsmqdqftq3qq.aos.us-east-1.on.aws"}],
+    http_auth=(
+        "admin",
+        "Admin@12",
+    ),  # dummy variables now, replace with actual values later
+    use_ssl=True,
+    verify_certs=True,
+    connection_class=RequestsHttpConnection,
+)
 
 
 def lambda_handler(event, context):
     print(event)
-    print("context")
-    print(context)
-    query = event["query"]
 
-    # Disambiguate query using Amazon Lex
-    # lex_response = lexClient.post_text(
-    #     botName="PhotoAlbumBot", botAlias="$LATEST", userId="Mar", inputText=query
-    # )
+    print(f"context: {context}")
+    user_id = event["userId"]
     
+    session_id = event["sessionId"]
+
+    query = event["currentIntent"]["slots"]["keyword"]
+
+    print(f"query: {query}")
+
     response = lexClient.recognize_text(
-                botId = "DG5VY8N0AZ",
-                botAliasId = "TSTALIASID",
-                localeId = "en_US",
-                sessionId = "test",
-                text = query,
-            )
-    print(response)
-    keywords = []
-    # if "slots" in lex_response:
-    #     keywords = lex_response["slots"].values
+        botId="DG5VY8N0AZ",
+        botAliasId="TSTALIASID",
+        localeId="en_US",
+        sessionId=session_id,
+        text=query,
+    )
+    print(f"response {response}")
 
-    # # Search OpenSearch only if keywords were returned from Amazon Lex
-    # if keywords:
-    #     opensearch_response = opensearch_client.search(
-    #         index="photos",
-    #         body={"query": {"multi_match": {"query": keywords, "fields": ["labels"]}}},
-    #     )
+    keywords = response["sessionState"]["intent"]["slots"]["keyword"]["value"]["originalValue"]
 
-    #     return {"statusCode": 200, "body": json.dumps(opensearch_response)}
+    if keywords:
+        print(keywords)
 
-    # # If no keywords were returned, return an empty response
-    # else:
-    #     return {"statusCode": 200, "body": json.dumps("No results found.")}
+        print("starting to search OpenSearch")
+        response = opensearch_client.search(
+            index="photos", body={"query": {"match": {"field": query}}}
+        )
+
+        return {"message": "Searched OpenSearch"}
+
+    else:
+        # return empty array of results
+        response = []
+        return {"message": "Search contained no keywords"}

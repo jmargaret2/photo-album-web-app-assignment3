@@ -4,7 +4,7 @@ from opensearchpy import OpenSearch, RequestsHttpConnection
 
 s3 = boto3.client("s3")
 opensearch_client = OpenSearch(
-    hosts=[{"host": "search-cloud-hw3-rjqzgwzppqcyrcgsmqdqftq3qq.aos.us-east-1.on.aws"}],  # dummy value, replace with actual one later
+    hosts=[{"host": "search-cloud-hw3-rjqzgwzppqcyrcgsmqdqftq3qq.aos.us-east-1.on.aws"}],
     http_auth=(
         "admin",
         "Admin@12",
