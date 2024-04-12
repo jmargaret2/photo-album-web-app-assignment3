@@ -1,0 +1,130 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS CloudFormation Template to create an empty Lambda function and trigger CodePipeline'
+Resources:
+  LF1:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      FunctionName: LF1
+      Code:
+        ZipFile: |
+          import json
+
+          def lambda_handler(event, context):
+              # Your Lambda function code goes here
+              return {
+                  'statusCode': 200,
+                  'body': json.dumps('Hello from Lambda!')
+              }
+      Handler: LF1.lambda_handler
+      Role: arn:aws:iam::767397693070:role/service-role/index-photos-LF1-role-kjekb1zm
+      Runtime: python3.12
+
+  LF2:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      FunctionName: LF2
+      Code:
+        ZipFile: |
+          import json
+
+          def lambda_handler(event, context):
+              # Your Lambda function code goes here
+              return {
+                  'statusCode': 200,
+                  'body': json.dumps('Hello from Lambda!')
+              }
+      Handler: LF2.lambda_handler
+      Role: arn:aws:iam::767397693070:role/service-role/search-photos-lf2-role-z0icje50
+      Runtime: python3.12
+
+  S3Permission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt LF1.Arn
+      Action: lambda:InvokeFunction
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref 'AWS::AccountId'
+  
+  imagesBucket:
+    Type: AWS::S3::Bucket
+    DependsOn:
+      - "S3Permission"
+    Properties:
+      BucketName: images-bucket-b2
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        IgnorePublicAcls: false
+        BlockPublicPolicy: false
+        RestrictPublicBuckets: false
+  
+  frontendBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: frontend-bucket-b1
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        IgnorePublicAcls: false
+        BlockPublicPolicy: false
+        RestrictPublicBuckets: false
+
+  frontendBucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref frontendBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: PublicReadGetObject
+            Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Sub 'arn:aws:s3:::${frontendBucket}/*'
+
+  imagesBucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref imagesBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: PublicReadGetObject
+            Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Sub 'arn:aws:s3:::${imagesBucket}/*'
+        
+  MyCodePipeline:
+    Type: 'AWS::CodePipeline::Pipeline'
+    Properties:
+      RoleArn: arn:aws:iam::767397693070:role/service-role/AWSCodePipelineServiceRole-us-east-1-cloud-hw3
+      ArtifactStore:
+        Type: S3
+        Location: codepipeline-us-east-1-767447032713
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: SourceAction
+              ActionTypeId:
+                Category: Source
+                Owner: ThirdParty
+                Provider: GitHub
+                Version: '1'
+              Configuration:
+                Owner: jmargaret2
+                Repo: photo-album-web-app-assignment3
+                Branch: main
+                OAuthToken: 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
+              OutputArtifacts:
+                - Name: SourceOutput
+        - Name: Build
+          Actions:
+            - Name: BuildAction
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: '1'
+              Configuration:
+                ProjectName: cloud-hw3
+              InputArtifacts:
+                - Name: SourceOutput
