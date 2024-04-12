@@ -51,10 +51,11 @@ Resources:
       - "S3Permission"
     Properties:
       BucketName: images-bucket-b2
-      NotificationConfiguration:
-        LambdaConfigurations: 
-          - Event: s3:ObjectCreated:*
-            Function: !GetAtt LF1.Arn
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        IgnorePublicAcls: false
+        BlockPublicPolicy: false
+        RestrictPublicBuckets: false
   
   frontendBucket:
     Type: 'AWS::S3::Bucket'
@@ -66,7 +67,7 @@ Resources:
         BlockPublicPolicy: false
         RestrictPublicBuckets: false
 
-  MyBucketPolicy:
+  frontendBucketPolicy:
     Type: 'AWS::S3::BucketPolicy'
     Properties:
       Bucket: !Ref frontendBucket
@@ -78,6 +79,19 @@ Resources:
             Principal: '*'
             Action: 's3:GetObject'
             Resource: !Sub 'arn:aws:s3:::${frontendBucket}/*'
+
+  imagesBucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref imagesBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: PublicReadGetObject
+            Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Sub 'arn:aws:s3:::${imagesBucket}/*'
         
   MyCodePipeline:
     Type: 'AWS::CodePipeline::Pipeline'
@@ -98,7 +112,7 @@ Resources:
               Configuration:
                 Owner: jmargaret2
                 Repo: photo-album-web-app-assignment3
-                Branch: codebuild
+                Branch: main
                 OAuthToken: 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
               OutputArtifacts:
                 - Name: SourceOutput
