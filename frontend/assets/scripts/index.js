@@ -28,28 +28,46 @@ var apigClient = apigClientFactory.newClient({
     apiKey: 'zXx8zyYojO2Spw71f6B116yuEwnmXFwY57R4NgHf'
 });
 
-$("#searchQuery").on("change", function () {
+$("#startSearch").on("click", function () {
+
     const url = new URL(location);
     const url1 = new URL(location);
-    url.searchParams.set("q", this.value);
+    searchQuery = $("#searchQuery").val();
+
+    url.searchParams.set("q", searchQuery);
     history.pushState({}, url1, url);
     var params = {
         // This is where any modeled request parameters should be added.
         // The key is the parameter name, as it is defined in the API in API Gateway.
-        q: this.value
+        q: searchQuery
     };
 
     var body = {};
-
     var additionalParams = {};
 
     apigClient.searchGet(params, body, additionalParams)
-    .then(function (result) {
-        console.log("here");
-        //This is where you would put a success callback
-    }).catch(function (result) {
-        //This is where you would put an error callback
-    });
+        .then(function (result) {
+            console.log("here");
+            var response = result.data;
+            console.log(response);
+            toShow = "";
+            if (response.results == true) {
+                console.log("hii")
+                for (let i = 0; i < response.urls.length; i++) {
+                    toShow += "<img id='result-img' src='" + response.urls[i] + "'></img>";
+                }
+                console.log(toShow)
+                $("#searchResult").append(toShow);
+            }
+            else {
+                console.log(response.message)
+                alert(response.message)
+            }
+
+            //This is where you would put a success callback
+        }).catch(function (result) {
+            //This is where you would put an error callback
+        });
 
 });
 
