@@ -93,7 +93,7 @@ Resources:
             Action: 's3:GetObject'
             Resource: !Sub 'arn:aws:s3:::${imagesBucket}/*'
         
-  MyCodePipeline:
+  MyCodePipeline1:
     Type: 'AWS::CodePipeline::Pipeline'
     Properties:
       RoleArn: arn:aws:iam::767397693070:role/service-role/AWSCodePipelineServiceRole-us-east-1-cloud-hw3
@@ -126,5 +126,41 @@ Resources:
                 Version: '1'
               Configuration:
                 ProjectName: cloud-hw3
+              InputArtifacts:
+                - Name: SourceOutput
+
+  MyCodePipeline2:
+    Type: 'AWS::CodePipeline::Pipeline'
+    Properties:
+      RoleArn: arn:aws:iam::767397693070:role/service-role/AWSCodePipelineServiceRole-us-east-1-cloud-hw3
+      ArtifactStore:
+        Type: S3
+        Location: codepipeline-us-east-1-767447032713
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: SourceAction
+              ActionTypeId:
+                Category: Source
+                Owner: ThirdParty
+                Provider: GitHub
+                Version: '1'
+              Configuration:
+                Owner: jmargaret2
+                Repo: photo-album-web-app-assignment3
+                Branch: main
+                OAuthToken: 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
+              OutputArtifacts:
+                - Name: SourceOutput
+        - Name: Build
+          Actions:
+            - Name: BuildAction
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: '1'
+              Configuration:
+                ProjectName: cloud-hw3-2
               InputArtifacts:
                 - Name: SourceOutput
