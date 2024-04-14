@@ -1,0 +1,16 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+  pre_build:
+    commands:
+      - echo "Installing dependencies..."
+  build:
+    commands:
+      - echo "Building Frontend"
+  post_build:
+    commands:
+      - aws s3 cp --recursive ./frontend s3://frontend-bucket-b1
+      - echo 'Public URL - https://frontentd-bucket-b1.s3.amazonaws.com/index.html'
