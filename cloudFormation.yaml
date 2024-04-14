@@ -56,6 +56,10 @@ Resources:
         IgnorePublicAcls: false
         BlockPublicPolicy: false
         RestrictPublicBuckets: false
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: 's3:ObjectCreated:*'
+            Function: !GetAtt LF1.Arn
   
   frontendBucket:
     Type: 'AWS::S3::Bucket'
@@ -164,3 +168,78 @@ Resources:
                 ProjectName: cloud-hw3-2
               InputArtifacts:
                 - Name: SourceOutput
+  
+  # Create API Gateway resource for root endpoint "/"
+  MyApiRootResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      RestApiId: !Ref MyApi
+      ParentId: !GetAtt MyApi.RootResourceId
+      PathPart: root
+
+  # Define API Gateway RestApi
+  MyApi:
+    Type: 'AWS::ApiGateway::RestApi'
+    Properties:
+      Name: file-upload-api2
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  # API Gateway for /search endpoint
+  MyApiSearchResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      RestApiId: !Ref MyApi
+      ParentId: !Ref MyApiRootResource
+      PathPart: search
+
+  # API Gateway for /upload endpoint
+  MyApiUploadResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      RestApiId: !Ref MyApi
+      ParentId: !Ref MyApiRootResource
+      PathPart: upload
+
+  # API Gateway for /upload/{key} endpoint
+  MyApiUploadKeyResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      RestApiId: !Ref MyApi
+      ParentId: !Ref MyApiUploadResource
+      PathPart: '{key}'
+
+  # API Gateway methods for /search endpoint with GET and OPTIONS methods
+  MyApiMethodSearchGetResource:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      RestApiId: !Ref MyApi
+      ResourceId: !Ref MyApiSearchResource
+      HttpMethod: GET
+      AuthorizationType: NONE
+
+  MyApiMethodSearchOptionsResource:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      RestApiId: !Ref MyApi
+      ResourceId: !Ref MyApiSearchResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+
+  # API Gateway methods for /upload endpoint with PUT and OPTIONS methods
+  MyApiMethodUploadOptionsResource:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      RestApiId: !Ref MyApi
+      ResourceId: !Ref MyApiUploadResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+
+  MyApiMethodUploadPutResource:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      RestApiId: !Ref MyApi
+      ResourceId: !Ref MyApiUploadKeyResource
+      HttpMethod: PUT
+      AuthorizationType: NONE
