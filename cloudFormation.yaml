@@ -56,6 +56,10 @@ Resources:
         IgnorePublicAcls: false
         BlockPublicPolicy: false
         RestrictPublicBuckets: false
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: 's3:ObjectCreated:*'
+            Function: !GetAtt LF1.Arn
   
   frontendBucket:
     Type: 'AWS::S3::Bucket'
