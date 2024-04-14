@@ -1,6 +1,9 @@
 version: 0.2
 
 phases:
+  install:
+    runtime-versions:
+      python: 3.12
   build:
       - aws s3 cp --recursive ./frontend s3://frontend-bucket-b1
       - echo 'Public URL - https://frontend-bucket-b1.s3.amazonaws.com/index.html'
